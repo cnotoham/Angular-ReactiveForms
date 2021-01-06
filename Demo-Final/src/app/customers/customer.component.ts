@@ -16,13 +16,13 @@ function emailMatcher(c: AbstractControl): { [key: string]: boolean } | null {
   if (emailControl.value === confirmControl.value) {
     return null;
   }
-  return { 'match': true };
+  return { match: true };
 }
 
 function ratingRange(min: number, max: number): ValidatorFn {
   return (c: AbstractControl): { [key: string]: boolean } | null => {
     if (c.value !== null && (isNaN(c.value) || c.value < min || c.value > max)) {
-      return { 'range': true };
+      return { range: true };
     }
     return null;
   };
@@ -38,18 +38,18 @@ export class CustomerComponent implements OnInit {
   customer = new Customer();
   emailMessage: string;
 
+  get addresses(): FormArray {
+    return this.customerForm.get('addresses') as FormArray;
+  }
+
   private validationMessages = {
     required: 'Please enter your email address.',
     email: 'Please enter a valid email address.'
   };
 
-  get addresses(): FormArray {
-    return <FormArray>this.customerForm.get('addresses');
-  }
-
   constructor(private fb: FormBuilder) { }
 
-  ngOnInit() {
+  ngOnInit(): void {
     this.customerForm = this.fb.group({
       firstName: ['', [Validators.required, Validators.minLength(3)]],
       lastName: ['', [Validators.required, Validators.maxLength(50)]],
@@ -108,14 +108,13 @@ export class CustomerComponent implements OnInit {
     this.customerForm.setControl('addresses', this.fb.array([addressGroup]));
   }
 
-  save() {
+  save(): void {
     console.log(this.customerForm);
     console.log('Saved: ' + JSON.stringify(this.customerForm.value));
   }
 
   setMessage(c: AbstractControl): void {
     this.emailMessage = '';
-    console.log(this.validationMessages);
     if ((c.touched || c.dirty) && c.errors) {
       this.emailMessage = Object.keys(c.errors).map(
         key => this.validationMessages[key]).join(' ');
